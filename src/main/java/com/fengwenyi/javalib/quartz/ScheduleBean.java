@@ -22,6 +22,9 @@ public class ScheduleBean {
     /** task description */
     private String description;
 
+    /** time type */
+    private TimeTypeEnum timeType;
+
     /** 类clazz */
     private Class clazz;
 
@@ -29,7 +32,10 @@ public class ScheduleBean {
     private String cron;
 
     /** time, simple */
-    private int time;
+    private Integer time;
+
+    /** 时间点 */
+    private Long atTime;
 
     /** job name */
     private String jobName;
