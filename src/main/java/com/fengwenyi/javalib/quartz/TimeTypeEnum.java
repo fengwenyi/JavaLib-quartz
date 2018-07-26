@@ -12,7 +12,7 @@ public enum TimeTypeEnum {
     /** 简单的定时任务(循环)*/
     SIMPLE(1, "simpleSchedule"),
 
-    /** 在一段时间之后执行一次 */
+    /** 指定一个时间点执行（毫秒数[Long]） */
     AT_TIME(2, "at time"),
 
     /** 使用cron表达式（时间点、循环、自定义时间） */

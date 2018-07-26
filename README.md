@@ -176,7 +176,7 @@ public class JobController {
 |job类|clazz|Class|定时任务执行的job类|
 |cron表达式|cron|String|cron表达式|
 |时间间隔|time|Integer|每隔一段时间执行一次|
-|时间间隔|atTime|Long|间隔一段时间后执行一次|
+|时间间隔|atTime|Long|指定一个时间点执行（毫秒数）|
 |Job名称|jobName|String|Job名称|
 |Job组|jobGroup|String|Job组名称|
 |TriggerName|triggerName|String|Trigger名称|
@@ -196,7 +196,7 @@ public class JobController {
 |名称|代码|说明|
 |---|---|---|
 |SIMPLE|1|简单的定时任务，每隔一段时间执行一次|
-|AT_TIME|2|间隔一段时间之后执行一次|
+|AT_TIME|2|指定一个时间点执行（毫秒数[Long]）|
 |CRON|3|使用cron表达式（时间点、循环、自定义时间）|
 
 ### 策略
