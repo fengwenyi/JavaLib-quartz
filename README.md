@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/fengwenyi/JavaLib-quartz.svg)](https://jitpack.io/#fengwenyi/JavaLib-quartz)
+
 # JavaLib-quartz
 
 Spring Boot Quartz
@@ -146,9 +148,11 @@ public class JobController {
 
 7.目录结构
 
+![package class](./images/package-class.png)
+
 8.运行测试
 
-
+![run test](./images/run-test.png)
 
 ### About Me
 
