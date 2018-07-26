@@ -202,6 +202,7 @@ public class JobController {
 ### 策略
 
 1、优先选用指定方式构造Trigger
+
 2、检查顺序：cron->atTime->simple，执行顺序：simple > atTime > cron 自下而上进行覆盖
 
 ### About Me
