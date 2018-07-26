@@ -1,5 +1,6 @@
 [![](https://jitpack.io/v/fengwenyi/JavaLib-quartz.svg)](https://jitpack.io/#fengwenyi/JavaLib-quartz)
 
+
 # JavaLib-quartz
 
 Spring Boot Quartz
@@ -153,6 +154,55 @@ public class JobController {
 8.运行测试
 
 ![run test](./images/run-test.png)
+
+### API
+
+|名称|方法|参数|返回类型|说明|
+|---|---|---|---|---|
+|开启定时任务|start|(ScheduleBean, Map<String, Object>)|boolean|开启是否成功，true:成功，false:失败|
+|开启定时任务|start|(ScheduleBean, Map<String, Object>)|boolean|开启是否成功，true:成功，false:失败|
+|定时任务当前状态|status| - |boolean|定时任务当前状态，true:运行中，false:已停止|
+|停止定时任务|stop| - |boolean|定时任务停止是否成功，true:成功，false:失败|
+
+### ScheduleBean字段说明
+
+|名称|参数|类型|说明|
+|---|---|---|---|
+|Scheduler|scheduler|Scheduler|Scheduler 对象|
+|编号|id|Long| -，保留字段|
+|名称|name|String|-，保留字段|
+|描述|description|String|-，保留字段|
+|选用类型|timeTime|TimeTypeEnum|选用构造Trigger对象类型|
+|job类|clazz|Class|定时任务执行的job类|
+|cron表达式|cron|String|cron表达式|
+|时间间隔|time|Integer|每隔一段时间执行一次|
+|时间间隔|atTime|Long|间隔一段时间后执行一次|
+|Job名称|jobName|String|Job名称|
+|Job组|jobGroup|String|Job组名称|
+|TriggerName|triggerName|String|Trigger名称|
+|Trigger组|triggerGroup|String|Trigger组名称|
+
+### TimeTypeEnum
+
+字段说明
+
+|字段|类型|说明|
+|---|---|---|
+|code|Integer|代码|
+|msg|String|说明|
+
+值说明
+
+|名称|代码|说明|
+|---|---|---|
+|SIMPLE|1|简单的定时任务，每隔一段时间执行一次|
+|AT_TIME|2|间隔一段时间之后执行一次|
+|CRON|3|使用cron表达式（时间点、循环、自定义时间）|
+
+### 策略
+
+1、优先选用指定方式构造Trigger
+2、检查顺序：cron->atTime->simple，执行顺序：simple > atTime > cron 自下而上进行覆盖
 
 ### About Me
 
