@@ -8,7 +8,7 @@ Spring Boot Quartz
 
 1.添加依赖：
 
-```
+```xml
     <!-- 测试版需要指定仓库 -->
     <repositories>
         <repository>
@@ -42,7 +42,7 @@ public class HelloTask extends QuartzTask {
     
 3.job/HelloJob.java
 
-``java
+```java
 import *.quartz.service.HelloService; // 原始包名被隐藏了
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -62,7 +62,7 @@ public class HelloJob extends QuartzJobBean {
         helloService.sayHello();
     }
 }
-``
+```
 
 4.service/HelloService.java
 
