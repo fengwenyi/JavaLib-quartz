@@ -22,7 +22,7 @@ Spring Boot Quartz
         <dependency>
             <groupId>com.github.fengwenyi</groupId>
             <artifactId>JavaLib-quartz</artifactId>
-            <version>1.0-alpha</version>
+            <version>1.0-beta</version>
         </dependency>
     </dependencies>
 ```
