@@ -3,11 +3,11 @@
 
 # JavaLib-quartz
 
-Spring Boot Quartz
+基于Spring Boot Quartz开发的JavaLib-quartz，目的是帮你快速构建定时任务系统，你可以专心编写你的业务逻辑，而不必关注定时任务具体是如何实现的，他的性能如何，有没有异常以及异常处理，监控等等问题。这些你可以在文档中得知。
 
 ### 快速使用
 
-1.添加依赖：
+第1步、添加依赖
 
 ```xml
     <!-- 测试版需要指定仓库 -->
@@ -22,14 +22,16 @@ Spring Boot Quartz
         <dependency>
             <groupId>com.github.fengwenyi</groupId>
             <artifactId>JavaLib-quartz</artifactId>
-            <version>1.0-beta</version>
+            <version>1.0-gamma</version>
         </dependency>
     </dependencies>
 ```
 
-2.task/HelloTask.java
+第2步、HelloTask.java
 
 ```java
+package com.fengwenyi.example.javalib_quartz.start;
+
 import com.fengwenyi.javalib.quartz.QuartzTask;
 import org.springframework.stereotype.Component;
 
@@ -39,121 +41,89 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelloTask extends QuartzTask {
 }
+
 ```
     
-3.job/HelloJob.java
+第3步、HelloJob.java
 
 ```java
-import *.quartz.service.HelloService; // 原始包名被隐藏了
+package com.fengwenyi.example.javalib_quartz.start;
+
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-
-/**
- * @author Wenyi Feng
- */
-public class HelloJob extends QuartzJobBean {
-
-    @Autowired
-    private HelloService helloService;
-
-    @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        helloService.sayHello();
-    }
-}
-```
-
-4.service/HelloService.java
-
-```java
-/**
- * @author Wenyi Feng
- */
-public interface HelloService {
-
-    void sayHello();
-
-}
-```
-
-5.service/impl/HelloServiceImpl.java
-
-```java
-import com.fengwenyi.javalib.util.ToastUtil; // https://github.com/fengwenyi/JavaLib
-import *.quartz.service.HelloService;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 /**
  * @author Wenyi Feng
  */
-@Service
-public class HelloServiceImpl implements HelloService {
+public class HelloJob extends QuartzJobBean {
     @Override
-    public void sayHello() {
-        ToastUtil.show("Hello : " + new Date());
+    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        System.out.println("Hello : " + new Date());
     }
 }
+
 ```
 
-6.controller/JobController.java
+第4步、HelloController.java
 
 ```java
+package com.fengwenyi.example.javalib_quartz.start;
+
 import com.fengwenyi.javalib.quartz.ScheduleBean;
-import *.quartz.job.HelloJob;
-import *.quartz.task.HelloTask;
+import com.fengwenyi.javalib.quartz.TimeTypeEnum;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 /**
  * @author Wenyi Feng
  */
 @RestController
-@RequestMapping("/job")
-public class JobController {
+@RequestMapping("/hello")
+public class HelloController {
 
     @Autowired
     private Scheduler scheduler;
 
     @Autowired
-    private HelloTask task;
+    private HelloTask helloTask;
 
-    @RequestMapping("/hello")
-    public boolean hello() {
-        ScheduleBean scheduleBean = new ScheduleBean();
-        scheduleBean.setClazz(HelloJob.class);
-        scheduleBean.setTime(3);
-        scheduleBean.setJobName("JOB_NAME");
-        scheduleBean.setJobGroup("GROUP_1");
-        scheduleBean.setTriggerName("TRIGGER_NAME");
-        scheduleBean.setTriggerGroup("GROUP_1");
-        scheduleBean.setScheduler(scheduler);
-
+    @RequestMapping("/job")
+    public boolean job() {
+        String jobName = "JOB";
+        String triggerName = "TRIGGER";
+        ScheduleBean scheduleBean = new ScheduleBean(scheduler, HelloJob.class, jobName, triggerName);
+        scheduleBean.setTimeType(TimeTypeEnum.AT_TIME);
+        scheduleBean.setAtTime(System.currentTimeMillis() + 1000 * 10); // 10s之后运行
+        boolean rs = false;
         try {
-            boolean rs = task.start(scheduleBean);
-            return rs;
+            rs = helloTask.start(scheduleBean);
+            System.out.println("cTime : " + new Date());
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
-        return false;
+        return rs;
     }
 
 }
 ```
 
-7.目录结构
+第5步、浏览器访问
 
-![package class](./images/package-class.png)
+    http://localhost:8080/hello/job
 
-8.运行测试
+如果看到 `true` ，那就继续下一步，否则就是出错了，需要去检查错误。
 
-![run test](./images/run-test.png)
+第6步、运行效果
+
+![快速使用运行测试](./images/start-run-test.png)
 
 ### API
 
@@ -199,11 +169,101 @@ public class JobController {
 |AT_TIME|2|指定一个时间点执行（毫秒数[Long]）|
 |CRON|3|使用cron表达式（时间点、循环、自定义时间）|
 
+### wiki
+
+一、需要在Job中注入Service
+
+使用 `@Autowired` 注解
+
+    @Autowired
+    private DBService dbService;
+
+
+二、每隔一段时间执行一次
+
+```java
+    int time;
+    ScheduleBean scheduleBean;
+    scheduleBean.setTimeType(TimeTypeEnum.SIMPLE);
+    scheduleBean.setTime(time);
+```
+
+三、指定一个时间点执行一次
+
+```java
+    long atTime;
+    ScheduleBean scheduleBean;
+    scheduleBean.setTimeType(TimeTypeEnum.AT_TIME);
+    scheduleBean.setAtTime(atTime);
+```
+
+四、通过使用cron表达式执行
+
+```java
+    String cron;
+    ScheduleBean scheduleBean;
+    scheduleBean.setTimeType(TimeTypeEnum.CRON);
+    scheduleBean.setCron(cron);
+```
+
+五、参数
+
+```java
+    // 将参数放到job中
+    Map<String, Object> jobMap;
+    ScheduleBean scheduleBean;
+    scheduleBean.setParamJobMap(jobMap);
+
+    // 将参数放到trigger中
+    Map<String, Object> triggerMap;
+    ScheduleBean scheduleBean;
+    scheduleBean.setParamTriggerMap(triggerMap);
+```
+
+六、关于在job获取参数
+
+两种思路：
+一是通过map的key获取值，
+二是通过构造与map的key相同的属性，提供set方法
+
+```java
+    // 获取自己的参数
+    JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+    jobDataMap.getInt("");
+    jobDataMap.getString("");
+    jobDataMap.getFloat("");
+    jobDataMap.getDouble("");
+    JobDataMap triggerDataMap =  context.getTrigger().getJobDataMap();
+
+    // 合并
+    // 如果job和trigger的key相同，trigger会覆盖job的值
+    JobDataMap dataMap = context.getMergedJobDataMap();
+```
+
+
+七、在job中获取jobDetail、trigger基础信息
+
+```java
+    // 获取jobDetail相关
+    JobKey jobKey = context.getJobDetail().getKey();
+    jobKey.getName();
+    jobKey.getGroup();
+    jobKey.getClass().getName();
+    // 获取trigger相关
+    TriggerKey triggerKey = context.getTrigger().getKey();
+    triggerKey.getName();
+    triggerKey.getGroup();
+```
+
 ### 策略
 
 1、优先选用指定方式构造Trigger
 
 2、检查顺序：cron->atTime->simple，执行顺序：simple > atTime > cron 自下而上进行覆盖
+
+### 示例代码
+
+[JavaLib-quartz-example](https://github.com/fengwenyi/example/tree/master/javalib-quartz-example)
 
 ### About Me
 
