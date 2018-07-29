@@ -22,11 +22,10 @@ public class QuartzTask {
     /**
      * 开启一个定时任务（如果定时任务正在运行，则开启失败）
      * @param scheduleBean schedule bean
-     * @param paramMap     job的参数
      * @return 定时任务开启是否成功：true，开启成功；false:开启失败
      * @throws SchedulerException 异常
      */
-    public boolean start(ScheduleBean scheduleBean, Map<String, Object> paramMap)
+    public boolean start(ScheduleBean scheduleBean)
             throws SchedulerException {
 
         // 如果定时器以及启动，那么将无法再次启动
@@ -71,7 +70,8 @@ public class QuartzTask {
 
             if (jobDetail != null && trigger != null) {
                 // 参数
-                param(jobDetail, paramMap);
+                paramJob(jobDetail, scheduleBean.paramJobMap);
+                paramTrigger(trigger, scheduleBean.paramTriggerMap);
 
                 scheduler.scheduleJob(jobDetail, trigger);
             }
@@ -79,16 +79,6 @@ public class QuartzTask {
             return true;
         }
         return false;
-    }
-
-    /**
-     * 开启一个定时任务（如果定时任务正在运行，则开启失败）
-     * @param scheduleBean schedule bean
-     * @return 定时任务开启是否成功：true，开启成功；false:开启失败
-     * @throws SchedulerException 异常
-     */
-    public boolean start(ScheduleBean scheduleBean) throws SchedulerException {
-        return start(scheduleBean, null);
     }
 
     /**
@@ -132,15 +122,29 @@ public class QuartzTask {
     }
 
     /**
-     * job参数封装
-     * @param jobDetail
+     * 将参数封装到JobDetail对象中
+     * @param obj jobDetail
      * @param paramMap
      */
-    private void param(JobDetail jobDetail, Map<String, Object> paramMap) {
+    private void paramJob(JobDetail obj, Map<String, Object> paramMap) {
         if (paramMap != null && !paramMap.isEmpty()) {
             Set<String> keys = paramMap.keySet();
             for (String key : keys) {
-                jobDetail.getJobDataMap().put(key, paramMap.get(key));
+                obj.getJobDataMap().put(key, paramMap.get(key));
+            }
+        }
+    }
+
+    /**
+     * 将参数封装到Trigger对象中
+     * @param obj trigger
+     * @param paramMap
+     */
+    private void paramTrigger(Trigger obj, Map<String, Object> paramMap) {
+        if (paramMap != null && !paramMap.isEmpty()) {
+            Set<String> keys = paramMap.keySet();
+            for (String key : keys) {
+                obj.getJobDataMap().put(key, paramMap.get(key));
             }
         }
     }

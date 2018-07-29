@@ -1,13 +1,18 @@
 package com.fengwenyi.javalib.quartz;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.quartz.Job;
 import org.quartz.Scheduler;
+
+import java.util.Map;
 
 /**
  * ScheduleBean
  * @author Wenyi Feng
  */
-@Data
+@Getter
+@Setter
 public class ScheduleBean {
 
     /** quartz scheduler obj */
@@ -26,7 +31,13 @@ public class ScheduleBean {
     private TimeTypeEnum timeType;
 
     /** 类clazz */
-    private Class clazz;
+    private Class<? extends Job> clazz;
+
+    /** job参数 */
+    Map<String, Object> paramJobMap;
+
+    /** trigger参数 */
+    Map<String, Object> paramTriggerMap;
 
     /** cron */
     private String cron;
@@ -49,4 +60,26 @@ public class ScheduleBean {
     /** trigger group name */
     private String triggerGroup;
 
+    /**
+     * 无参数构成方法
+     */
+    public ScheduleBean() {
+    }
+
+    /**
+     * 简单的 快速的构成方法
+     * @param scheduler Scheduler对象
+     * @param clazz Class<? extends Job>
+     * @param jobName 任务名称
+     * @param triggerName 触发器名称
+     */
+    public ScheduleBean(Scheduler scheduler,
+                        Class<? extends Job> clazz,
+                        String jobName,
+                        String triggerName) {
+        this.scheduler = scheduler;
+        this.clazz = clazz;
+        this.jobName = jobName;
+        this.triggerName = triggerName;
+    }
 }
