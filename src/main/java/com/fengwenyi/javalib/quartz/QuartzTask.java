@@ -70,8 +70,8 @@ public class QuartzTask {
 
             if (jobDetail != null && trigger != null) {
                 // 参数
-                paramJob(jobDetail, scheduleBean.paramJobMap);
-                paramTrigger(trigger, scheduleBean.paramTriggerMap);
+                paramJob(jobDetail, scheduleBean.getParamJobMap());
+                paramTrigger(trigger, scheduleBean.getParamTriggerMap());
 
                 scheduler.scheduleJob(jobDetail, trigger);
             }

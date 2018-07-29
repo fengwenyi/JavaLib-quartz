@@ -34,10 +34,10 @@ public class ScheduleBean {
     private Class<? extends Job> clazz;
 
     /** job参数 */
-    Map<String, Object> paramJobMap;
+    private Map<String, Object> paramJobMap;
 
     /** trigger参数 */
-    Map<String, Object> paramTriggerMap;
+    private Map<String, Object> paramTriggerMap;
 
     /** cron */
     private String cron;
