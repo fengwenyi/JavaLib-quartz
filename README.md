@@ -143,7 +143,9 @@ public class HelloController {
 |名称|name|String|-，保留字段|
 |描述|description|String|-，保留字段|
 |选用类型|timeTime|TimeTypeEnum|选用构造Trigger对象类型|
-|job类|clazz|Class|定时任务执行的job类|
+|job类|clazz|Class<? extends Job>|定时任务执行的job类|
+|job参数|paramJobMap|Map<String, Object>|定时任务执行的job类|
+|job类|paramTriggerMap|Map<String, Object>|定时任务执行的job类|
 |cron表达式|cron|String|cron表达式|
 |时间间隔|time|Integer|每隔一段时间执行一次|
 |时间间隔|atTime|Long|指定一个时间点执行（毫秒数）|
