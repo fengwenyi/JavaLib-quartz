@@ -255,6 +255,14 @@ public class HelloController {
     triggerKey.getGroup();
 ```
 
+八、task目前支持的方法
+
+开启任务：start
+
+查看当前任务状态：status
+
+停止任务：stop
+
 ### 策略
 
 1、优先选用指定方式构造Trigger
