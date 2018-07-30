@@ -129,8 +129,7 @@ public class HelloController {
 
 |名称|方法|参数|返回类型|说明|
 |---|---|---|---|---|
-|开启定时任务|start|(ScheduleBean, Map<String, Object>)|boolean|开启是否成功，true:成功，false:失败|
-|开启定时任务|start|(ScheduleBean, Map<String, Object>)|boolean|开启是否成功，true:成功，false:失败|
+|开启定时任务|start|(ScheduleBean)|boolean|开启是否成功，true:成功，false:失败|
 |定时任务当前状态|status| - |boolean|定时任务当前状态，true:运行中，false:已停止|
 |停止定时任务|stop| - |boolean|定时任务停止是否成功，true:成功，false:失败|
 
