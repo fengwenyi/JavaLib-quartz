@@ -10,7 +10,6 @@
 第1步、添加依赖
 
 ```xml
-    <!-- 测试版需要指定仓库 -->
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -22,7 +21,7 @@
         <dependency>
             <groupId>com.github.fengwenyi</groupId>
             <artifactId>JavaLib-quartz</artifactId>
-            <version>1.0-gamma</version>
+            <version>1.0.1</version>
         </dependency>
     </dependencies>
 ```
