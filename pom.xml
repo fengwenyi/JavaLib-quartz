@@ -6,28 +6,36 @@
 
     <groupId>com.fengwenyi</groupId>
     <artifactId>JavaLib-quartz</artifactId>
-    <version>1.0-gamma</version>
+    <version>1.0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
-        <spring-boot-quartz.version>2.0.3.RELEASE</spring-boot-quartz.version>
+        <quartz.version>2.3.0</quartz.version>
     </properties>
 
     <dependencies>
-        <!-- spring boot quartz -->
+
+        <!-- quartz start -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-quartz</artifactId>
-            <version>${spring-boot-quartz.version}</version>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        <!-- quartz end -->
+
+        <!-- test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <!-- lombok -->
@@ -35,6 +43,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
