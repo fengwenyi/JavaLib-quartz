@@ -1,6 +1,7 @@
 package com.fengwenyi.javalib.quartz;
 
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import java.util.Date;
 import java.util.Map;
@@ -12,6 +13,21 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * Quartz Base Task
+ *
+ * <ul>
+ *     <li>开启定时任务</li>
+ *     <li>暂停定时任务</li>
+ *     <li>恢复定时任务</li>
+ *     <li>停止定时任务</li>
+ * </ul>
+ *
+ * <p>
+ *     暂停定时任务：暂停所有定时任务，根据job暂停定时任务，根据trigger暂停定时任务
+ * </p>
+ *
+ * <p>
+ *     停止定时任务后，不能再启动
+ * </p>
  * @author Wenyi Feng
  */
 public class QuartzTask {
@@ -94,7 +110,7 @@ public class QuartzTask {
     }
 
     /**
-     * 关闭定时任务
+     * 停止定时任务
      * @return 定时任务是否成功关闭：true，已关闭；false:关闭失败
      *          可通过调用{#link status()}方法查看定时任务当前状态
      * @throws SchedulerException 异常
@@ -102,6 +118,71 @@ public class QuartzTask {
     public boolean stop() throws SchedulerException {
         if (scheduler != null) {
             scheduler.shutdown();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 暂停所有定时任务
+     * @return true：成功；false：失败
+     * @throws SchedulerException 异常
+     */
+    public boolean pauseAll() throws SchedulerException {
+        if (scheduler != null) {
+            scheduler.pauseAll();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据JobKey暂停定时任务
+     * @return true：成功；false：失败
+     * @throws SchedulerException 异常
+     */
+    public boolean pauseByJobKey(JobKey jobKey) throws SchedulerException {
+        if (scheduler != null) {
+            scheduler.pauseJob(jobKey);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据JobKeys暂停定时任务
+     * @return true：成功；false：失败
+     * @throws SchedulerException 异常
+     */
+    public boolean pauseByJobKeys(GroupMatcher<JobKey> jobKeys) throws SchedulerException {
+        if (scheduler != null) {
+            scheduler.pauseJobs(jobKeys);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据TriggerKey暂停定时任务
+     * @return true：成功；false：失败
+     * @throws SchedulerException 异常
+     */
+    public boolean pauseByTriggerKey(TriggerKey triggerKey) throws SchedulerException {
+        if (scheduler != null) {
+            scheduler.pauseTrigger(triggerKey);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据TriggerKeys暂停定时任务
+     * @return true：成功；false：失败
+     * @throws SchedulerException 异常
+     */
+    public boolean pauseByTriggerKeys(GroupMatcher<TriggerKey> triggerKeys) throws SchedulerException {
+        if (scheduler != null) {
+            scheduler.pauseTriggers(triggerKeys);
             return true;
         }
         return false;
