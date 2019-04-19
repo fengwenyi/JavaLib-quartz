@@ -91,7 +91,7 @@ public class QuartzTask {
 
                 scheduler.scheduleJob(jobDetail, trigger);
             }
-
+            scheduler.start();
             return true;
         }
         return false;

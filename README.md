@@ -1,13 +1,12 @@
 [![](https://jitpack.io/v/fengwenyi/JavaLib-quartz.svg)](https://jitpack.io/#fengwenyi/JavaLib-quartz)
 
+<h1 align="center">JavaLib-quartz</h1>
 
-# JavaLib-quartz
+之前版本是基于Spring Boot Quartz，后来因为一些原因，被舍弃了，当前是基于企业级定时任务框架Quartz Job Scheduling开发的，目的是帮你快速构建定时任务系统，你可以专心编写你的业务逻辑，而不必关注定时任务具体是如何实现的
 
-基于Spring Boot Quartz开发的JavaLib-quartz，目的是帮你快速构建定时任务系统，你可以专心编写你的业务逻辑，而不必关注定时任务具体是如何实现的，他的性能如何，有没有异常以及异常处理，监控等等问题。这些你可以在文档中得知。
+## 如何快速开始？
 
-### 快速使用
-
-第1步、添加依赖
+#### 第一步：添加依赖
 
 ```xml
     <repositories>
@@ -21,116 +20,59 @@
         <dependency>
             <groupId>com.github.fengwenyi</groupId>
             <artifactId>JavaLib-quartz</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 ```
 
-第2步、HelloTask.java
+#### 第二步：编写我们的任务逻辑
 
 ```java
-package com.fengwenyi.example.javalib_quartz.start;
-
-import com.fengwenyi.javalib.quartz.QuartzTask;
-import org.springframework.stereotype.Component;
-
-/**
- * @author Wenyi Feng
- */
-@Component
-public class HelloTask extends QuartzTask {
-}
-
-```
-    
-第3步、HelloJob.java
-
-```java
-package com.fengwenyi.example.javalib_quartz.start;
-
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-
-import java.util.Date;
-
-/**
- * @author Wenyi Feng
- */
-public class HelloJob extends QuartzJobBean {
-    @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        System.out.println("Hello : " + new Date());
+public class HelloJob implements Job {
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        System.out.println("开始执行任务：" + new Date());
     }
 }
-
 ```
-
-第4步、HelloController.java
+    
+#### 第三步：编写测试代码
 
 ```java
-package com.fengwenyi.example.javalib_quartz.start;
-
-import com.fengwenyi.javalib.quartz.ScheduleBean;
-import com.fengwenyi.javalib.quartz.TimeTypeEnum;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
-
-/**
- * @author Wenyi Feng
- */
-@RestController
-@RequestMapping("/hello")
-public class HelloController {
-
-    @Autowired
-    private Scheduler scheduler;
-
-    @Autowired
-    private HelloTask helloTask;
-
-    @RequestMapping("/job")
-    public boolean job() {
+@Test
+public void test() {
+    try {
+        QuartzTask quartzTask = new QuartzTask();
+        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         String jobName = "JOB";
         String triggerName = "TRIGGER";
         ScheduleBean scheduleBean = new ScheduleBean(scheduler, HelloJob.class, jobName, triggerName);
         scheduleBean.setTimeType(TimeTypeEnum.AT_TIME);
-        scheduleBean.setAtTime(System.currentTimeMillis() + 1000 * 10); // 10s之后运行
-        boolean rs = false;
-        try {
-            rs = helloTask.start(scheduleBean);
-            System.out.println("cTime : " + new Date());
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-        return rs;
+        scheduleBean.setAtTime(System.currentTimeMillis() + 1000 * 5); // 5s之后运行
+        boolean rs = quartzTask.start(scheduleBean);
+        if (rs)
+            System.out.println("定时任务，启动成功");
+        else
+            System.out.println("定时任务，启动失败");
+        System.out.println("当前时间：" + new Date());
+        //运行一段时间后关闭
+        Thread.sleep(10000);
+    } catch (SchedulerException | InterruptedException e) {
+        e.printStackTrace();
     }
-
 }
 ```
 
-第5步、浏览器访问
-
-    http://localhost:8080/hello/job
-
-如果看到 `true` ，那就继续下一步，否则就是出错了，需要去检查错误。
-
 第6步、运行效果
 
-![快速使用运行测试](./images/start-run-test.png)
+![快速使用运行测试](./images/1.png)
 
 ### API
 
-|名称|方法|参数|返回类型|说明|
-|---|---|---|---|---|
-|开启定时任务|start|(ScheduleBean)|boolean|开启是否成功，true:成功，false:失败|
-|定时任务当前状态|status| - |boolean|定时任务当前状态，true:运行中，false:已停止|
-|停止定时任务|stop| - |boolean|定时任务停止是否成功，true:成功，false:失败|
+| 名称             | 方法    | 参数           | 返回类型 | 说明|
+|---               |---     |---            |---      |---|
+| 开启定时任务       | start  | (ScheduleBean) |boolean | 开启是否成功，true:成功，false:失败|
+| 定时任务当前状态    | status | -              |boolean | 定时任务当前状态，true:运行中，false:已停止|
+| 停止定时任务       | stop   |  -             |boolean | 定时任务停止是否成功，true:成功，false:失败|
 
 ### ScheduleBean字段说明
 
@@ -269,20 +211,10 @@ public class HelloController {
 
 2、检查顺序：cron->atTime->simple，执行顺序：simple > atTime > cron 自下而上进行覆盖
 
-### 示例代码
-
-[JavaLib-quartz-example](https://github.com/fengwenyi/example/tree/master/javalib-quartz-example)
-
-### About Me
-
-```
-    ©author Wenyi Feng
-```
-
 ### Licensed
 
 ```
-   Copyright 2018 Wenyi Feng(xfsy_2015@163.com)
+   Copyright 2018-2019 Erwin Feng(xfsy_2015@163.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
